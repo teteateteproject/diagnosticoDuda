@@ -1,8 +1,22 @@
-# Diagnóstico Frédy
+# Diagnóstico Frédy / Duda
 
-Quiz de qualificação que mede a maturidade em IA de uma agência de viagens (lazer, corporativa, multipropriedade, parques, hotelaria, operadora) e aponta em qual frente o Frédy entrega resultado primeiro: **Vendas**, **Atendimento** ou **Pós-viagem**. Lead salvo no Supabase e enviado por webhook pro n8n (card no CRM Frédy).
+Quiz de qualificação que mede a maturidade em IA de uma operação e aponta em qual frente o produto entrega resultado primeiro. Lead salvo no Supabase e enviado por webhook pro n8n (card no CRM).
 
-Identidade visual: **Téte à Téte** (preto, branco e verde, Plus Jakarta Sans, bordas sem sombra, sem emoji).
+**Um código, dois produtos.** `NEXT_PUBLIC_PRODUCT` escolhe qual definição carregar no build:
+
+| `NEXT_PUBLIC_PRODUCT` | Público | Setores | Tema |
+|---|---|---|---|
+| `fredy` (padrão) | agências de viagens, multipropriedade, parques, hotelaria | Vendas / Atendimento / Pós-viagem | claro, Plus Jakarta Sans (cores placeholder até receber a marca) |
+| `duda` | empresas com 3+ vendedores e vários canais, qualquer nicho | Vendas / Suporte / Pós-vendas | navy escuro + laranja, Archivo + Inter |
+
+No Vercel: dois projetos apontando pro mesmo repo, cada um com seu `NEXT_PUBLIC_PRODUCT`, `NEXT_PUBLIC_WHATSAPP_NUMBER` e `NEXT_PUBLIC_SITE_URL`.
+
+## Onde mexer
+
+- **Perguntas, textos, setores, CTAs, WhatsApp padrão de cada produto**: `src/products/fredy.ts` e `src/products/duda.ts` (contrato em `src/products/types.ts`).
+- **Tema (cores, raio de botão)**: `src/app/globals.css` — `@theme` é o padrão (Frédy) e `:root[data-product="duda"]` sobrescreve. Os componentes só usam tokens semânticos (`accent`, `strong`, `btn`, `cta`, `sector-*`, `level-*`).
+- **Logo**: campo `logo` no produto (`{ src: "/logos/duda.svg", width, height }`), arquivo em `public/logos/`. Sem logo, o header usa um wordmark tipográfico.
+- **Fontes**: `src/app/layout.tsx` (`FONT_SETUP`), arquivos em `src/fonts/`.
 
 ## Stack
 
@@ -33,8 +47,9 @@ Sem `.env.local` o app funciona inteiro: o diagnóstico é calculado e exibido, 
 
 | Variável | Onde | O que |
 |---|---|---|
+| `NEXT_PUBLIC_PRODUCT` | build | `fredy` (padrão) ou `duda` |
 | `NEXT_PUBLIC_SITE_URL` | cliente | URL pública (metadata/OG) |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | cliente | WhatsApp comercial, só dígitos com DDI (padrão `554740034215`) |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | cliente | WhatsApp comercial, só dígitos com DDI (padrão: Frédy `554740034215`, Duda `554840034215`) |
 | `SUPABASE_URL` | servidor | URL do projeto |
 | `SUPABASE_SERVICE_ROLE_KEY` | servidor | **Nunca** com prefixo `NEXT_PUBLIC_` |
 | `N8N_LEAD_WEBHOOK_URL` | servidor | Webhook que recebe o lead (opcional) |
@@ -48,7 +63,7 @@ Rode `supabase/migrations/0001_leads.sql` no SQL Editor (ou `supabase db push`).
 
 ```
 /                      landing (hero, como funciona, o que recebe, CTA)
-/diagnostico           contato → 17 perguntas → resultado (client, estado em sessionStorage)
+/diagnostico           contato → perguntas → resultado (client, estado em sessionStorage)
 POST /api/leads        valida (zod) → rate limit → honeypot → calcula diagnóstico no servidor
                        → insert Supabase → POST webhook n8n (best-effort, timeout 6s)
 ```
@@ -79,10 +94,8 @@ Sugestão de workflow: Webhook (valida o Bearer) → Set (monta card) → WTS `P
 
 ## Editar o diagnóstico
 
-- **Perguntas, opções e pesos**: `src/lib/questions.ts`. Pontuação máxima, cortes dos níveis (62% / 40%) e validação zod são derivados automaticamente.
-- **Textos do resultado, próximos passos e CTAs**: `src/lib/scoring.ts`.
-- **Telefone, nomes, links**: `src/lib/config.ts` + `.env`.
-- **Tokens de cor/raio/espaçamento**: `src/app/globals.css` (`@theme`).
+- **Perguntas, opções e pesos**: `src/products/<produto>.ts`. Pontuação máxima, cortes dos níveis (62% / 40%) e validação zod são derivados automaticamente.
+- **Lógica de pontuação** (comum aos dois): `src/lib/scoring.ts`.
 
 ## Segurança (já aplicado)
 

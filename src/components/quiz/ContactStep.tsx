@@ -5,11 +5,12 @@ import { contactSchema, type Contact, type ContactInput } from "@/lib/schema";
 import { Button } from "@/components/site/Button";
 import { ArrowRightIcon } from "@/components/site/icons";
 import { CONFIG } from "@/lib/config";
+import { PRODUCT } from "@/products";
 
 type Errors = Partial<Record<keyof ContactInput, string>>;
 
 const inputCls =
-  "w-full rounded-[14px] border border-line-2 bg-bg px-4 py-[13px] text-[16px] text-ink placeholder:text-ink-muted-2 focus:border-black focus:outline-none aria-[invalid]:border-black";
+  "w-full rounded-btn border border-line-2 bg-bg px-4 py-[13px] text-[16px] text-ink placeholder:text-ink-muted-2 focus:border-accent focus:outline-none aria-[invalid]:border-accent";
 
 export function ContactStep({
   initial,
@@ -51,14 +52,11 @@ export function ContactStep({
 
   return (
     <form onSubmit={handleSubmit} noValidate className="rise">
-      <span className="rounded-pill bg-green px-3 py-1 text-[13px] font-bold text-black">Antes de começar</span>
+      <span className="rounded-pill bg-accent px-3 py-1 text-[13px] font-bold text-accent-fg">Antes de começar</span>
       <h1 className="mt-4 text-[clamp(1.75rem,3.6vw,2.3rem)] font-extrabold leading-[1.15] tracking-[-0.02em] text-ink">
         Pra quem mandamos o diagnóstico?
       </h1>
-      <p className="mt-3 max-w-[34rem]">
-        O resultado aparece na tela e vai por e-mail. O WhatsApp é só pra quando você quiser falar com o time{" "}
-        {CONFIG.product}.
-      </p>
+      <p className="mt-3 max-w-[34rem]">{PRODUCT.contactLead}</p>
 
       <div className="mt-7 grid gap-4">
         <div>
@@ -106,7 +104,7 @@ export function ContactStep({
         <Button type="submit">
           Começar <ArrowRightIcon />
         </Button>
-        <span className="text-[14px] text-ink-muted-2">Seus dados ficam com o time {CONFIG.brand}. Sem spam.</span>
+        <span className="text-[14px] text-ink-muted-2">Seus dados ficam com o time {CONFIG.product}. Sem spam.</span>
       </div>
     </form>
   );

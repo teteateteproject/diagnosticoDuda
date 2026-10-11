@@ -148,14 +148,14 @@ export function QuizFlow() {
     <div ref={topRef} className="flex min-h-dvh flex-col">
       <header className="no-print sticky top-0 z-10 border-b border-line bg-bg/95 backdrop-blur">
         <div className="wrap flex items-center justify-between gap-4 py-3">
-          <Logo height={40} />
+          <Logo height={36} />
           <div className="flex items-center gap-3">
             <span className="hidden text-[14px] font-semibold text-ink sm:inline">Diagnóstico {CONFIG.product}</span>
-            <span className="num rounded-pill bg-green px-3 py-1 text-[13px] font-bold text-black">{stepLabel}</span>
+            <span className="num rounded-pill bg-accent px-3 py-1 text-[13px] font-bold text-accent-fg">{stepLabel}</span>
           </div>
         </div>
         <div className="h-[3px] w-full bg-bg-s2" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)} aria-label="Progresso do diagnóstico">
-          <div className="h-full bg-green transition-[width] duration-500 ease-out" style={{ width: `${progress}%` }} />
+          <div className="h-full bg-accent transition-[width] duration-500 ease-out" style={{ width: `${progress}%` }} />
         </div>
       </header>
 
@@ -186,9 +186,9 @@ export function QuizFlow() {
       <footer className="no-print border-t border-line">
         <div className="wrap flex flex-wrap items-center justify-between gap-2 py-5 text-[13px] text-ink-muted-2">
           <span>
-            © {new Date().getFullYear()} {CONFIG.brand} · Diagnóstico {CONFIG.product}
+            © {new Date().getFullYear()} {CONFIG.productFull} · Diagnóstico {CONFIG.product}
           </span>
-          <Link href="/" className="font-bold text-green-ink underline-offset-4 hover:underline">
+          <Link href="/" className="font-bold text-accent-ink underline-offset-4 hover:underline">
             Voltar ao início
           </Link>
         </div>

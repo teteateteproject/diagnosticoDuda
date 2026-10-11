@@ -50,7 +50,7 @@ export function QuestionStep({
   return (
     <div key={question.id} className="rise">
       <div className="flex flex-wrap items-center gap-3">
-        <span className="rounded-pill bg-green px-3 py-1 text-[13px] font-bold text-black">{question.block}</span>
+        <span className="rounded-pill bg-accent px-3 py-1 text-[13px] font-bold text-accent-fg">{question.block}</span>
         <span className="num text-[14px] text-ink-muted-2">
           Pergunta {index} de {total}
         </span>
@@ -76,8 +76,8 @@ export function QuestionStep({
                 className={[
                   "flex w-full items-center justify-between gap-4 rounded-lg border px-5 py-4 text-left text-[16px] font-semibold transition-colors",
                   isSel
-                    ? "border-black bg-green-tint text-ink"
-                    : "border-line-2 bg-bg text-ink hover:border-black disabled:opacity-40 disabled:hover:border-line-2",
+                    ? "border-accent bg-accent-tint text-ink"
+                    : "border-line-2 bg-bg text-ink hover:border-accent disabled:opacity-40 disabled:hover:border-line-2",
                 ].join(" ")}
               >
                 <span>{opt.label}</span>
@@ -86,7 +86,7 @@ export function QuestionStep({
                   className={[
                     "flex h-6 w-6 shrink-0 items-center justify-center border-2",
                     isMulti ? "rounded-[7px]" : "rounded-full",
-                    isSel ? "border-black bg-black text-green" : "border-line-2 bg-bg",
+                    isSel ? "border-accent bg-strong text-accent" : "border-line-2 bg-bg",
                   ].join(" ")}
                 >
                   {isSel && <CheckIcon className="h-[14px] w-[14px]" />}
@@ -101,7 +101,7 @@ export function QuestionStep({
                   onChange={(e) => onTextChange(e.target.value)}
                   placeholder="Qual é o seu segmento?"
                   aria-label="Descreva o segmento"
-                  className="mt-2 w-full rounded-[14px] border border-line-2 bg-bg px-4 py-[12px] text-[16px] text-ink placeholder:text-ink-muted-2 focus:border-black focus:outline-none"
+                  className="mt-2 w-full rounded-btn border border-line-2 bg-bg px-4 py-[12px] text-[16px] text-ink placeholder:text-ink-muted-2 focus:border-accent focus:outline-none"
                 />
               )}
             </div>

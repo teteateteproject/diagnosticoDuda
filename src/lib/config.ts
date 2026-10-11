@@ -1,23 +1,26 @@
 /**
- * Fatos que mudam (telefone, nomes, links) vivem aqui.
+ * Fatos que mudam (telefone, nomes, links) vivem aqui, derivados do produto ativo.
  * Nunca repita um número ou URL no JSX.
  */
+import { PRODUCT } from "@/products";
+
 const WHATSAPP_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "554740034215";
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || PRODUCT.whatsappDefault;
 
 export const CONFIG = {
-  brand: "Téte à Téte",
-  product: "Frédy",
-  productFull: "Frédy.app",
-  siteName: "Diagnóstico Frédy",
-  siteUrl: normalizeUrl(process.env.NEXT_PUBLIC_SITE_URL) || "https://diagnostico.fredy.app",
-  description:
-    "Descubra em 3 minutos o nível de maturidade da sua agência de viagens em IA e onde o Frédy traz mais resultado.",
+  productKey: PRODUCT.key,
+  product: PRODUCT.name,
+  productFull: PRODUCT.nameFull,
+  theProduct: PRODUCT.theName,
+  siteName: `Diagnóstico ${PRODUCT.name}`,
+  siteUrl: normalizeUrl(process.env.NEXT_PUBLIC_SITE_URL) || PRODUCT.siteUrlDefault,
+  description: PRODUCT.description,
+  audience: PRODUCT.audience,
   whatsapp: {
     number: WHATSAPP_NUMBER,
     display: formatPhone(WHATSAPP_NUMBER),
   },
-  totalMinutes: 3,
+  totalMinutes: PRODUCT.totalMinutes,
 } as const;
 
 export function waLink(message: string): string {

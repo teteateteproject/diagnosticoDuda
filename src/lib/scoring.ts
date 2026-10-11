@@ -1,9 +1,12 @@
 import { quizQuestions, SEGMENT_LABELS, type SectorKey } from "./questions";
-import { CONFIG, waLink } from "./config";
+import { waLink } from "./config";
+import { PRODUCT } from "@/products";
+
+export type { MaturityLevel } from "@/products";
 
 export type Answers = Record<string, string | string[]>;
 
-export type MaturityLevel = "alta" | "media" | "inicial";
+import type { MaturityLevel } from "@/products";
 
 export interface Scores {
   maturidade: number;
@@ -67,60 +70,15 @@ export const MATURITY_CONFIG: Record<
   MaturityLevel,
   { label: string; short: string; description: string; tone: "green" | "yellow" | "blue" }
 > = {
-  alta: {
-    label: "Maturidade alta",
-    short: "Alta",
-    description: `sua operação está pronta pro ${CONFIG.product}. Volume, equipe e urgência já pedem IA no atendimento.`,
-    tone: "green",
-  },
-  media: {
-    label: "Maturidade média",
-    short: "Média",
-    description: `sua operação está em evolução. Tem demanda, mas ainda perde venda por falta de processo e velocidade.`,
-    tone: "yellow",
-  },
-  inicial: {
-    label: "Maturidade inicial",
-    short: "Inicial",
-    description: `sua operação está em estágio inicial. O primeiro passo é organizar os leads antes de automatizar.`,
-    tone: "blue",
-  },
+  alta: { label: "Maturidade alta", short: "Alta", description: PRODUCT.maturity.alta, tone: "green" },
+  media: { label: "Maturidade média", short: "Média", description: PRODUCT.maturity.media, tone: "yellow" },
+  inicial: { label: "Maturidade inicial", short: "Inicial", description: PRODUCT.maturity.inicial, tone: "blue" },
 };
 
 export const SECTOR_CONFIG: Record<SectorKey, { label: string; colorVar: string; message: string }> = {
-  vendas: {
-    label: "Vendas",
-    colorVar: "var(--color-green)",
-    message: `O ${CONFIG.product} vai acelerar a conversão: orçamento em minutos, follow-up automático dos orçamentos parados e nenhum lead esquecido no WhatsApp ou Instagram.`,
-  },
-  atendimento: {
-    label: "Atendimento",
-    colorVar: "var(--color-cat-marketing)",
-    message: `O ${CONFIG.product} vai organizar o atendimento: triagem com IA, distribuição automática entre consultores e tempo de resposta em segundos, 24 horas por dia.`,
-  },
-  posVenda: {
-    label: "Pós-viagem",
-    colorVar: "var(--color-cat-servico)",
-    message: `O ${CONFIG.product} vai estruturar o pós-viagem: avaliação automática, lembretes de recompra por data e campanhas pra quem já viajou com você.`,
-  },
-};
-
-const NEXT_STEPS: Record<MaturityLevel, string[]> = {
-  alta: [
-    "Agendar uma demonstração com o time comercial",
-    "Mapear os painéis do CRM (leads, orçamentos, pós-viagem)",
-    "Definir o agente de IA do primeiro atendimento",
-  ],
-  media: [
-    "Ver casos de agências parecidas com a sua",
-    "Centralizar WhatsApp, Instagram e site num só lugar",
-    "Criar uma cadência de follow-up pros orçamentos parados",
-  ],
-  inicial: [
-    "Receber os materiais da Academia Frédy",
-    "Registrar cada lead com origem e status",
-    "Definir um tempo máximo de resposta pra equipe",
-  ],
+  vendas: { ...PRODUCT.sectors.vendas, colorVar: "var(--color-sector-1)" },
+  atendimento: { ...PRODUCT.sectors.atendimento, colorVar: "var(--color-sector-2)" },
+  posVenda: { ...PRODUCT.sectors.posVenda, colorVar: "var(--color-sector-3)" },
 };
 
 function getTopSector(scores: Scores) {
@@ -133,8 +91,8 @@ function getTopSector(scores: Scores) {
   if (max === 0) {
     return {
       key: "combined" as const,
-      label: "Vendas, Atendimento e Pós-viagem",
-      message: `O ${CONFIG.product} vai atuar de forma integrada: vendas, atendimento e pós-viagem na mesma ferramenta.`,
+      label: PRODUCT.sectorsAllLabel,
+      message: PRODUCT.sectorsCombinedMessage,
     };
   }
   const tied = sectors.filter((s) => s.score === max);
@@ -145,26 +103,13 @@ function getTopSector(scores: Scores) {
   return {
     key: "combined" as const,
     label: labels,
-    message: `O ${CONFIG.product} vai atuar em ${labels} ao mesmo tempo, entregando resultado em mais de uma frente.`,
+    message: PRODUCT.sectorsTiedMessage(labels),
   };
 }
 
 function getCta(level: MaturityLevel) {
-  const map = {
-    alta: {
-      text: "Agendar demonstração",
-      msg: `Olá! Minha agência teve Maturidade Alta no Diagnóstico ${CONFIG.product} e quero agendar uma demonstração.`,
-    },
-    media: {
-      text: "Ver casos de agências",
-      msg: `Olá! Minha agência teve Maturidade Média no Diagnóstico ${CONFIG.product} e quero conhecer casos de agências parecidas.`,
-    },
-    inicial: {
-      text: "Receber materiais da Academia",
-      msg: `Olá! Minha agência teve Maturidade Inicial no Diagnóstico ${CONFIG.product} e quero receber os materiais da Academia Frédy.`,
-    },
-  } as const;
-  return { text: map[level].text, link: waLink(map[level].msg) };
+  const c = PRODUCT.cta[level];
+  return { text: c.text, link: waLink(c.message) };
 }
 
 export function generateDiagnosis(answers: Answers): Diagnosis {
@@ -181,9 +126,7 @@ export function generateDiagnosis(answers: Answers): Diagnosis {
       : SEGMENT_LABELS[segment] ?? "";
 
   const levelText = { alta: "maturidade alta", media: "maturidade média", inicial: "maturidade inicial" }[level];
-  const segmentPart = segmentLabel ? ` Operações de ${segmentLabel.toLowerCase()} como a sua` : " Sua operação";
-
-  const diagnosisText = `Com base nas suas respostas, sua operação tem ${levelText} pra adotar o ${CONFIG.product}.${segmentPart} tende${segmentLabel ? "m" : ""} a ganhar mais rápido em ${top.label}. ${top.message}`;
+  const diagnosisText = PRODUCT.diagnosisText({ levelText, segmentLabel, topLabel: top.label, topMessage: top.message });
 
   return {
     maturityLevel: level,
@@ -196,7 +139,7 @@ export function generateDiagnosis(answers: Answers): Diagnosis {
     topSectorLabel: top.label,
     sectorMessage: top.message,
     diagnosisText,
-    nextSteps: NEXT_STEPS[level],
+    nextSteps: PRODUCT.nextSteps[level],
     ctaText: cta.text,
     ctaLink: cta.link,
   };

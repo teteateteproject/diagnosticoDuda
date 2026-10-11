@@ -9,9 +9,9 @@ import { ArrowRightIcon, CheckIcon, WhatsAppIcon } from "@/components/site/icons
 export type SaveState = "saving" | "saved" | "local" | "error";
 
 const TONE_PILL: Record<"green" | "yellow" | "blue", string> = {
-  green: "bg-green text-black",
-  yellow: "bg-cat-marketing text-black",
-  blue: "bg-cat-servico text-black",
+  green: "bg-level-alta text-level-fg",
+  yellow: "bg-level-media text-level-fg",
+  blue: "bg-level-inicial text-level-fg",
 };
 
 export function ResultStep({
@@ -50,13 +50,13 @@ export function ResultStep({
       </div>
 
       {/* Painel escuro com o resultado */}
-      <section className="hero-glow relative overflow-hidden rounded-2xl bg-black px-7 py-7 text-on-black-body sm:px-9 sm:py-8">
+      <section className="hero-glow relative overflow-hidden rounded-2xl bg-strong px-7 py-7 text-on-strong-body sm:px-9 sm:py-8">
         <div className="relative grid gap-7 sm:grid-cols-[auto_1fr] sm:items-start">
           <div>
-            <div className="num text-[54px] font-extrabold leading-none tracking-[-0.04em] text-green">
+            <div className="num text-[54px] font-extrabold leading-none tracking-[-0.04em] text-accent">
               {diagnosis.maturityPct}%
             </div>
-            <div className="num mt-2 text-[14px] font-semibold text-on-black-body">
+            <div className="num mt-2 text-[14px] font-semibold text-on-strong-body">
               {diagnosis.maturityScore} de {diagnosis.maxMaturityScore} pontos
             </div>
           </div>
@@ -64,12 +64,12 @@ export function ResultStep({
             <span className={`inline-block rounded-pill px-3 py-1 text-[13px] font-bold ${TONE_PILL[cfg.tone]}`}>
               {cfg.label}
             </span>
-            <h1 className="mt-3 text-[clamp(1.4rem,3vw,1.9rem)] font-extrabold leading-[1.15] tracking-[-0.02em] text-on-black">
+            <h1 className="mt-3 text-[clamp(1.4rem,3vw,1.9rem)] font-extrabold leading-[1.15] tracking-[-0.02em] text-on-strong">
               {firstName}, {cfg.description}
             </h1>
-            <div className="mt-5 h-2 w-full max-w-[22rem] overflow-hidden rounded-pill bg-on-black-line">
+            <div className="mt-5 h-2 w-full max-w-[22rem] overflow-hidden rounded-pill bg-on-strong-line">
               <div
-                className="h-full rounded-pill bg-green transition-[width] duration-700 ease-out"
+                className="h-full rounded-pill bg-accent transition-[width] duration-700 ease-out"
                 style={{ width: `${diagnosis.maturityPct}%` }}
               />
             </div>
@@ -80,7 +80,7 @@ export function ResultStep({
       {/* Impacto por setor */}
       <section className="mt-5 rounded-2xl border border-line-2 p-6">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-[19px] font-bold tracking-[-0.02em] text-ink">Onde o {CONFIG.product} entrega primeiro</h2>
+          <h2 className="text-[19px] font-bold tracking-[-0.02em] text-ink">Onde {CONFIG.theProduct} entrega primeiro</h2>
           <span className="text-[14px] text-ink-muted-2">Impacto por setor</span>
         </div>
         <ul className="mt-5 grid gap-4">
@@ -94,7 +94,7 @@ export function ResultStep({
                     <span className="h-3 w-3 rounded-full" style={{ background: s.color, boxShadow: "0 0 0 1px rgba(10,10,10,.25)" }} aria-hidden="true" />
                     <span className={`text-[15px] font-bold ${isTop ? "text-ink" : "text-ink-muted"}`}>{s.label}</span>
                     {isTop && (
-                      <span className="rounded-pill bg-green-tint px-[10px] py-[3px] text-[12.5px] font-bold text-green-ink">
+                      <span className="rounded-pill bg-accent-tint px-[10px] py-[3px] text-[12.5px] font-bold text-accent-ink">
                         Maior impacto
                       </span>
                     )}
@@ -119,8 +119,8 @@ export function ResultStep({
       <section className="mt-5 rounded-2xl border border-line-2 p-6">
         <h2 className="text-[19px] font-bold tracking-[-0.02em] text-ink">Seu diagnóstico</h2>
         <p className="mt-3 text-[16px] leading-[1.7]">{diagnosis.diagnosisText}</p>
-        <div className="mt-5 rounded-r-lg border-l-4 border-green bg-bg-s1 px-6 py-5">
-          <div className="text-[14px] font-bold text-green-ink">Resumindo</div>
+        <div className="mt-5 rounded-r-lg border-l-4 border-accent bg-bg-s1 px-6 py-5">
+          <div className="text-[14px] font-bold text-accent-ink">Resumindo</div>
           <p className="mt-[6px] text-[18px] font-semibold leading-[1.5] text-ink">{diagnosis.sectorMessage}</p>
         </div>
 
@@ -128,7 +128,7 @@ export function ResultStep({
         <ul className="mt-3 grid gap-2">
           {diagnosis.nextSteps.map((step) => (
             <li key={step} className="flex items-start gap-3 text-[15.5px] leading-[1.6]">
-              <CheckIcon className="mt-[5px] h-[18px] w-[18px] shrink-0 text-green-check" />
+              <CheckIcon className="mt-[5px] h-[18px] w-[18px] shrink-0 text-accent-check" />
               <span>{step}</span>
             </li>
           ))}

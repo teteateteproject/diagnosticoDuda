@@ -4,8 +4,10 @@ import { CONFIG } from "@/lib/config";
 import { PRODUCT } from "@/products";
 
 /**
- * Logo do produto. Se `PRODUCT.logo` estiver definido (arquivo em /public),
- * renderiza a imagem; senão, um wordmark tipográfico com o nome do produto.
+ * Logo do produto. Se `PRODUCT.logo` estiver definido (SVG/PNG em /public), renderiza a imagem.
+ * Sem arquivo, desenha o wordmark tipograficamente com as cores da marca:
+ *  - Frédy: "Fr" navy + "édy" azul, itálico pesado
+ *  - Duda:  "Duda" em preto/branco (conforme o tema) + ponto coral
  */
 export function Logo({ height = 44, className = "" }: { height?: number; className?: string }) {
   const logo = PRODUCT.logo;
@@ -21,20 +23,45 @@ export function Logo({ height = 44, className = "" }: { height?: number; classNa
           style={{ height, width: "auto" }}
         />
       ) : (
-        <span className="inline-flex items-center gap-2">
-          <span
-            className="inline-flex items-center justify-center rounded-[10px] bg-accent font-extrabold text-accent-fg"
-            style={{ width: height * 0.8, height: height * 0.8, fontSize: height * 0.46 }}
-            aria-hidden="true"
-          >
-            {CONFIG.product[0]}
-          </span>
-          <span className="font-display font-extrabold tracking-[-0.03em] text-ink" style={{ fontSize: height * 0.5 }}>
-            {CONFIG.productFull}
-          </span>
-        </span>
+        <Wordmark height={height} />
       )}
     </Link>
+  );
+}
+
+function Wordmark({ height }: { height: number }) {
+  const fontSize = Math.round(height * 0.62);
+  if (PRODUCT.key === "duda") {
+    return (
+      <span
+        className="font-display font-black tracking-[-0.04em] text-ink"
+        style={{ fontSize, lineHeight: `${height}px`, display: "inline-block" }}
+      >
+        Duda
+        <span
+          aria-hidden="true"
+          style={{
+            display: "inline-block",
+            verticalAlign: "baseline",
+            width: "0.22em",
+            height: "0.22em",
+            marginLeft: "0.06em",
+            marginBottom: "0.03em",
+            borderRadius: "50%",
+            background: "linear-gradient(135deg, #ff4d56 0%, #ff6b35 100%)",
+          }}
+        />
+      </span>
+    );
+  }
+  return (
+    <span
+      className="font-display font-extrabold italic leading-none tracking-[-0.045em]"
+      style={{ fontSize, height, display: "inline-flex", alignItems: "center" }}
+    >
+      <span style={{ color: "#142138" }}>Fr</span>
+      <span style={{ color: "#3ca8df" }}>édy</span>
+    </span>
   );
 }
 

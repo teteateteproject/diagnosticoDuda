@@ -6,7 +6,7 @@ Quiz de qualificação que mede a maturidade em IA de uma operação e aponta em
 
 | `NEXT_PUBLIC_PRODUCT` | Público | Setores | Tema |
 |---|---|---|---|
-| `fredy` (padrão) | agências de viagens, multipropriedade, parques, hotelaria | Vendas / Atendimento / Pós-viagem | claro, Plus Jakarta Sans (cores placeholder até receber a marca) |
+| `fredy` (padrão) | agências de viagens, multipropriedade, parques, hotelaria | Vendas / Atendimento / Pós-viagem | claro, navy `#142138` + azul `#3CA8DF` da logo, Plus Jakarta Sans |
 | `duda` | empresas com 3+ vendedores e vários canais, qualquer nicho | Vendas / Suporte / Pós-vendas | navy escuro + laranja, Archivo + Inter |
 
 No Vercel: dois projetos apontando pro mesmo repo, cada um com seu `NEXT_PUBLIC_PRODUCT`, `NEXT_PUBLIC_WHATSAPP_NUMBER` e `NEXT_PUBLIC_SITE_URL`.

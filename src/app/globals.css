@@ -8,50 +8,52 @@
   --font-sans: var(--font-body), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: var(--font-heading), var(--font-body), system-ui, sans-serif;
 
+  /* ---------- Tema Frédy (padrão): fundo claro, navy #142138 + azul #3CA8DF da logo ---------- */
+
   /* superfícies e texto */
   --color-bg: #ffffff;
-  --color-bg-s1: #f5f6f8;
-  --color-bg-s2: #e9ecf1;
-  --color-ink: #0b1220;
-  --color-ink-muted: #3d4555;
-  --color-ink-muted-2: #5f6775;
-  --color-line: #0b122017;
-  --color-line-2: #0b122029;
+  --color-bg-s1: #f3f7fb;
+  --color-bg-s2: #e4ecf4;
+  --color-ink: #142138;
+  --color-ink-muted: #3f4b5e;
+  --color-ink-muted-2: #64718a;
+  --color-line: #14213817;
+  --color-line-2: #14213829;
 
-  /* bloco forte (hero, painel de resultado) */
-  --color-strong: #0b1220;
+  /* bloco forte (hero, painel de resultado) = navy da logo */
+  --color-strong: #142138;
   --color-on-strong: #ffffff;
-  --color-on-strong-body: #c3c9d4;
-  --color-on-strong-muted: #96a0b0;
-  --color-on-strong-strong: #e6eaf0;
+  --color-on-strong-body: #c3cedd;
+  --color-on-strong-muted: #8d9bb1;
+  --color-on-strong-strong: #e6edf5;
   --color-on-strong-line: #ffffff24;
-  --color-glow: #2563eb38;
+  --color-glow: #3ca8df4d;
 
-  /* acento */
-  --color-accent: #2563eb;
-  --color-accent-fg: #ffffff;
-  --color-accent-ink: #1d4ed8;
-  --color-accent-tint: #e8efff;
-  --color-accent-check: #2563eb;
+  /* acento = azul da logo; texto sobre ele em navy (5.2:1) */
+  --color-accent: #3ca8df;
+  --color-accent-fg: #142138;
+  --color-accent-ink: #1a7fb5;
+  --color-accent-tint: #e6f4fb;
+  --color-accent-check: #1a9ad6;
 
-  /* botão primário */
-  --color-btn: #0b1220;
+  /* botão primário: navy com ícone azul */
+  --color-btn: #142138;
   --color-btn-fg: #ffffff;
-  --color-btn-icon: #60a5fa;
+  --color-btn-icon: #3ca8df;
 
-  /* bloco CTA */
-  --color-cta: #2563eb;
-  --color-cta-title: #ffffff;
-  --color-cta-ink: #dbe6ff;
+  /* bloco CTA: azul com texto navy e botões navy */
+  --color-cta: #3ca8df;
+  --color-cta-title: #142138;
+  --color-cta-ink: #0f2a44;
 
   /* setores (vendas / atendimento / pós) e níveis */
-  --color-sector-1: #2563eb;
-  --color-sector-2: #f59e0b;
-  --color-sector-3: #10b981;
+  --color-sector-1: #3ca8df;
+  --color-sector-2: #f5a623;
+  --color-sector-3: #2fbf71;
   --color-level-alta: #34d399;
   --color-level-media: #fbbf24;
   --color-level-inicial: #93c5fd;
-  --color-level-fg: #0b1220;
+  --color-level-fg: #142138;
 
   --radius-xs: 6px;
   --radius-sm: 10px;

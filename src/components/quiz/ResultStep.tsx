@@ -1,7 +1,7 @@
 "use client";
 
-import { MATURITY_CONFIG, SECTOR_CONFIG, answerLabels, type Answers, type Diagnosis } from "@/lib/scoring";
-import { quizQuestions, type SectorKey } from "@/lib/questions";
+import { ACTIVE_SECTORS, MATURITY_CONFIG, SECTOR_CONFIG, answerLabels, type Answers, type Diagnosis } from "@/lib/scoring";
+import { quizQuestions } from "@/lib/questions";
 import { CONFIG } from "@/lib/config";
 import { Button, ButtonLink, TextLink } from "@/components/site/Button";
 import { ArrowRightIcon, CheckIcon, WhatsAppIcon } from "@/components/site/icons";
@@ -29,7 +29,7 @@ export function ResultStep({
 }) {
   const cfg = MATURITY_CONFIG[diagnosis.maturityLevel];
   const firstName = contactName.trim().split(/\s+/)[0] || "Olá";
-  const sectors = (Object.keys(SECTOR_CONFIG) as SectorKey[]).map((key) => ({
+  const sectors = ACTIVE_SECTORS.map((key) => ({
     key,
     label: SECTOR_CONFIG[key].label,
     color: SECTOR_CONFIG[key].colorVar,

@@ -34,7 +34,7 @@ const note = [
   `RESULTADO`,
   `Maturidade: ${nivel} (${b.maturity_score}/${b.max_maturity_score} pts · ${b.maturity_pct}%)`,
   `Setor de maior impacto: ${b.top_sector}`,
-  `Vendas ${b.vendas_score} · Suporte ${b.atendimento_score} · Pós-vendas ${b.pos_venda_score}`,
+  `Vendas ${b.vendas_score} · Suporte ${b.atendimento_score}`,
   `Prazo pra resolver: ${readable.solution_timeline || ans.solution_timeline || '—'}`,
   `Faturamento: ${readable.revenue || ans.revenue || '—'}`,
   ``,

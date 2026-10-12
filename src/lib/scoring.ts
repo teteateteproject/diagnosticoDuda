@@ -75,14 +75,21 @@ export const MATURITY_CONFIG: Record<
   inicial: { label: "Maturidade inicial", short: "Inicial", description: PRODUCT.maturity.inicial, tone: "blue" },
 };
 
-export const SECTOR_CONFIG: Record<SectorKey, { label: string; colorVar: string; message: string }> = {
-  vendas: { ...PRODUCT.sectors.vendas, colorVar: "var(--color-sector-1)" },
-  atendimento: { ...PRODUCT.sectors.atendimento, colorVar: "var(--color-sector-2)" },
-  posVenda: { ...PRODUCT.sectors.posVenda, colorVar: "var(--color-sector-3)" },
+const SECTOR_COLORS: Record<SectorKey, string> = {
+  vendas: "var(--color-sector-1)",
+  atendimento: "var(--color-sector-2)",
+  posVenda: "var(--color-sector-3)",
 };
 
+/** Só os setores ativos do produto, na ordem definida em PRODUCT.sectorKeys */
+export const SECTOR_CONFIG = Object.fromEntries(
+  PRODUCT.sectorKeys.map((key) => [key, { ...PRODUCT.sectors[key]!, colorVar: SECTOR_COLORS[key] }]),
+) as Record<SectorKey, { label: string; colorVar: string; message: string }>;
+
+export const ACTIVE_SECTORS: SectorKey[] = PRODUCT.sectorKeys;
+
 function getTopSector(scores: Scores) {
-  const sectors = (Object.keys(SECTOR_CONFIG) as SectorKey[]).map((key) => ({
+  const sectors = ACTIVE_SECTORS.map((key) => ({
     key,
     label: SECTOR_CONFIG[key].label,
     score: scores[key],

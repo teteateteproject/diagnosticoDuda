@@ -2,7 +2,7 @@ import type { ProductDefinition, QuizQuestion } from "./types";
 
 /**
  * Diagnóstico Duda — empresas com 3+ vendedores e vários canais (WhatsApp, Instagram, Facebook),
- * qualquer nicho. Setores: Vendas / Suporte / Pós-vendas.
+ * qualquer nicho. Setores: Vendas / Suporte.
  */
 
 const questions: QuizQuestion[] = [
@@ -155,9 +155,9 @@ const questions: QuizQuestion[] = [
     multiple: true,
     maxSelect: 2,
     options: [
-      { label: "Demora pra responder os clientes", value: "demora", atendimento: 2, vendas: 2, posVenda: 1, maturidade: 2 },
+      { label: "Demora pra responder os clientes", value: "demora", atendimento: 2, vendas: 2, maturidade: 2 },
       { label: "Perdemos contatos, não damos conta do volume", value: "perdemos_contatos", vendas: 3, atendimento: 2, maturidade: 3 },
-      { label: "Conversas desorganizadas, ninguém sabe o status", value: "organizacao", vendas: 2, atendimento: 2, posVenda: 2, maturidade: 2 },
+      { label: "Conversas desorganizadas, ninguém sabe o status", value: "organizacao", vendas: 2, atendimento: 2, maturidade: 2 },
       { label: "Não conseguimos medir o resultado das vendas", value: "medir_resultados", vendas: 3, maturidade: 2 },
     ],
   },
@@ -196,30 +196,30 @@ export const duda: ProductDefinition = {
   whatsappDefault: "554840034215",
   siteUrlDefault: "https://diagnostico.duda.app",
   description:
-    "Descubra em 3 minutos o nível de maturidade da sua empresa em IA e onde a Duda traz mais resultado: vendas, suporte ou pós-vendas.",
+    "Descubra em 3 minutos o nível de maturidade da sua empresa em IA e onde a Duda traz mais resultado: vendas ou suporte.",
   totalMinutes: 3,
 
   landing: {
     h1: "Sua empresa está pronta pra vender com IA?",
     lead:
-      "Em 3 minutos você descobre o nível de maturidade da sua operação e em qual frente a Duda traz resultado primeiro: vendas, suporte ou pós-vendas.",
+      "Em 3 minutos você descobre o nível de maturidade da sua operação e em qual frente a Duda traz resultado primeiro: vendas ou suporte.",
     stepsIntro:
       "Três etapas, nenhuma delas pede acesso ao seu WhatsApp, Instagram ou CRM. Você responde, a pontuação é calculada e o diagnóstico aparece na tela.",
     step1Text:
       "Nome, e-mail e WhatsApp. É pra onde mandamos o relatório e pra onde o time responde, se você quiser conversar.",
     step2Text:
-      "Múltipla escolha sobre canais, equipe, funil, suporte e pós-venda. Nada de campo aberto pra preencher.",
+      "Múltipla escolha sobre canais, equipe, funil e atendimento. Nada de campo aberto pra preencher.",
     step3Text:
       "Nível de maturidade (alta, média ou inicial), o setor onde a Duda traz mais resultado e os próximos passos.",
     receiveIntro:
-      "O diagnóstico olha pra quatro coisas: quanto da sua venda já passa pelo WhatsApp e Instagram, como a equipe atende hoje, se existe funil e o que acontece depois da venda. Com isso ele mostra onde está o dinheiro que você deixa na mesa.",
+      "O diagnóstico olha pra quatro coisas: quanto da sua venda já passa pelo WhatsApp e Instagram, como a equipe atende hoje e se existe funil. Com isso ele mostra onde está o dinheiro que você deixa na mesa.",
     deliverables: [
       "Pontuação de maturidade em IA da sua operação",
-      "Setor de maior impacto: vendas, suporte ou pós-vendas",
+      "Setor de maior impacto: vendas ou suporte",
       "Três próximos passos práticos, de acordo com o seu nível",
       "Relatório pra baixar e compartilhar com os sócios",
     ],
-    calloutText: "Você responde {n} perguntas e sai sabendo se o problema é captar, atender ou fazer o cliente voltar.",
+    calloutText: "Você responde {n} perguntas e sai sabendo se o problema é captar ou atender.",
     quote: "Cliente que espera resposta por um dia já comprou do concorrente.",
     ctaTitle: "Pronto pra descobrir onde sua empresa perde venda?",
     ctaText:
@@ -230,6 +230,7 @@ export const duda: ProductDefinition = {
   contactLead:
     "O resultado aparece na tela e vai por e-mail. O WhatsApp é só pra quando você quiser falar com o time Duda.",
 
+  sectorKeys: ["vendas", "atendimento"],
   sectors: {
     vendas: {
       label: "Vendas",
@@ -241,15 +242,10 @@ export const duda: ProductDefinition = {
       message:
         "A Duda vai automatizar e organizar o atendimento: triagem com IA, respostas pras dúvidas recorrentes e menos retrabalho pra equipe.",
     },
-    posVenda: {
-      label: "Pós-vendas",
-      message:
-        "A Duda vai estruturar o pós-venda: acompanhamento automático depois da compra, reativação por data e mais recorrência.",
-    },
   },
-  sectorsAllLabel: "Vendas, Suporte e Pós-vendas",
+  sectorsAllLabel: "Vendas e Suporte",
   sectorsCombinedMessage:
-    "A Duda vai atuar de forma integrada: vendas, suporte e pós-vendas na mesma ferramenta.",
+    "A Duda vai atuar de forma integrada: vendas e suporte na mesma ferramenta.",
   sectorsTiedMessage: (labels) =>
     `A Duda vai atuar em ${labels} ao mesmo tempo, entregando resultado em mais de uma frente.`,
 

@@ -81,7 +81,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  name: $json.name,\n  phoneNumber: $json.phone,\n  email: $json.email,\n  tagNames: ['Duda', 'Diagnóstico'],\n  metadata: {\n    diagnostico_nivel: $json.nivel,\n    diagnostico_pct: String($json.pct),\n    diagnostico_setor: $json.top_sector,\n    diagnostico_segmento: $json.segment,\n    diagnostico_data: $json.data_br\n  },\n  options: {\n    upsert: true,\n    upsertFields: ['Name', 'Email', 'Tags', 'Metadata'],\n    upsertTagOperation: 'INSERTIFNOTEXISTS'\n  }\n}) }}",
+        "jsonBody": "={{ JSON.stringify({\n  name: $json.name,\n  phoneNumber: $json.phone,\n  email: $json.email,\n  tagNames: ['Diagnóstico Duda'],\n  metadata: {\n    diagnostico_nivel: $json.nivel,\n    diagnostico_pct: String($json.pct),\n    diagnostico_setor: $json.top_sector,\n    diagnostico_segmento: $json.segment,\n    diagnostico_data: $json.data_br\n  },\n  options: {\n    upsert: true,\n    upsertFields: ['Name', 'Email', 'Tags', 'Metadata'],\n    upsertTagOperation: 'INSERTIFNOTEXISTS'\n  }\n}) }}",
         "options": {}
       },
       "id": "8b9d29a7-5d2b-45d4-bdd8-bef16247eb31",
@@ -108,7 +108,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  stepId: 'a80658c9-4327-405a-a848-2ed69995517d',\n  title: $('Montar dados').item.json.card_title,\n  description: $('Montar dados').item.json.card_description,\n  contactIds: [$json.id],\n  tagNames: ['Duda'],\n  metadata: {\n    origem: 'diagnostico-duda',\n    diagnostico_nivel: $('Montar dados').item.json.nivel,\n    diagnostico_pct: String($('Montar dados').item.json.pct),\n    diagnostico_setor: $('Montar dados').item.json.top_sector,\n    diagnostico_prazo: $('Montar dados').item.json.prazo,\n    diagnostico_faturamento: $('Montar dados').item.json.faturamento,\n    lead_id: $('Montar dados').item.json.lead_id || ''\n  }\n}) }}",
+        "jsonBody": "={{ JSON.stringify({\n  stepId: 'a80658c9-4327-405a-a848-2ed69995517d',\n  title: $('Montar dados').item.json.card_title,\n  description: $('Montar dados').item.json.card_description,\n  contactIds: [$json.id],\n  tagNames: ['Duda', 'Diagnóstico Duda'],\n  metadata: {\n    origem: 'diagnostico-duda',\n    diagnostico_nivel: $('Montar dados').item.json.nivel,\n    diagnostico_pct: String($('Montar dados').item.json.pct),\n    diagnostico_setor: $('Montar dados').item.json.top_sector,\n    diagnostico_prazo: $('Montar dados').item.json.prazo,\n    diagnostico_faturamento: $('Montar dados').item.json.faturamento,\n    lead_id: $('Montar dados').item.json.lead_id || ''\n  }\n}) }}",
         "options": {}
       },
       "id": "4f7b9010-b5ca-43e3-b8fb-e3fc47249b8f",

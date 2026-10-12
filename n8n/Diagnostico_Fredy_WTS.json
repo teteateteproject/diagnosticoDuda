@@ -1,0 +1,259 @@
+{
+  "name": "Diagnóstico Frédy - Lead → WTS (contato + card + anotação)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "diagnostico-fredy",
+        "authentication": "headerAuth",
+        "responseMode": "onReceived",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "id": "7d5a8228-b3db-446d-bbf3-514902602dee",
+      "name": "Webhook Diagnóstico",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Diagnóstico Frédy - Webhook Secret"
+        }
+      },
+      "notes": "Recebe o POST do site do Frédy. Credencial Header Auth NOVA (não a do WTS): Name=Authorization, Value=Bearer <N8N_WEBHOOK_SECRET da Vercel do Frédy>."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "215fd746-c3b2-4478-90f1-d04fca734ca6",
+              "leftValue": "={{ $json.body.product }}",
+              "rightValue": "fredy",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "db117f4f-28b5-4d1f-8e98-b9647129ba7c",
+      "name": "É Frédy?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Nó \"Montar dados\" (Code, Run Once for All Items)\n// Entrada: body do webhook enviado pelo site (POST /api/leads → N8N_LEAD_WEBHOOK_URL)\nconst b = $input.first().json.body ?? $input.first().json;\n\n// ---- telefone: só dígitos, com DDI 55, no formato que o WTS usa (+55DDDNÚMERO)\nlet digits = String(b.whatsapp || '').replace(/\\D/g, '');\nif (!(digits.startsWith('55') && digits.length >= 12)) digits = '55' + digits;\nconst phone = '+' + digits;\n\n// ---- rótulos\nconst nivelMap = { alta: 'Alta', media: 'Média', inicial: 'Inicial' };\nconst nivel = nivelMap[b.maturity_level] || b.maturity_level || '';\nconst d = b.diagnosis || {};\nconst ans = b.answers || {};\nconst readable = b.answers_readable || {};\n\nconst dataBR = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });\n\n// ---- anotação do card: respostas por bloco\nconst blocks = [];\nfor (const q of (b.answers_detail || [])) {\n  let blk = blocks.find(x => x.name === q.block);\n  if (!blk) { blk = { name: q.block, items: [] }; blocks.push(blk); }\n  blk.items.push(`• ${q.question}\\n  → ${q.answer || '—'}`);\n}\n\nconst note = [\n  `DIAGNÓSTICO FRÉDY — ${dataBR}`,\n  `Nome: ${b.name}`,\n  `E-mail: ${b.email}`,\n  `WhatsApp: ${phone}`,\n  `Segmento: ${b.segment || '—'}`,\n  ``,\n  `RESULTADO`,\n  `Maturidade: ${nivel} (${b.maturity_score}/${b.max_maturity_score} pts · ${b.maturity_pct}%)`,\n  `Setor de maior impacto: ${b.top_sector}`,\n  `Vendas ${b.vendas_score} · Atendimento ${b.atendimento_score} · Pós-viagem ${b.pos_venda_score}`,\n  `Prazo pra resolver: ${readable.solution_timeline || ans.solution_timeline || '—'}`,\n  `Faturamento: ${readable.revenue || ans.revenue || '—'}`,\n  ``,\n  `RESPOSTAS`,\n  ...blocks.flatMap(blk => [`[${blk.name}]`, ...blk.items, ``]),\n  `DIAGNÓSTICO ENTREGUE`,\n  d.diagnosisText || '',\n  ``,\n  `Próximos passos sugeridos:`,\n  ...((d.nextSteps || []).map(s => `• ${s}`)),\n  ``,\n  `CTA mostrado: ${d.ctaText || '—'}`,\n  `Lead ID (Supabase): ${b.id || '—'}`,\n].join('\\n').slice(0, 8000); // limite da API\n\nreturn [{\n  json: {\n    lead_id: b.id || null,\n    product: b.product || 'fredy',\n    name: b.name,\n    email: b.email,\n    phone,\n    segment: b.segment || '',\n    nivel,\n    nivel_key: b.maturity_level,\n    pct: b.maturity_pct,\n    top_sector: b.top_sector,\n    prazo: readable.solution_timeline || ans.solution_timeline || '',\n    faturamento: readable.revenue || ans.revenue || '',\n    card_title: `Diagnóstico Frédy · ${b.name} · Maturidade ${nivel} (${b.maturity_pct}%)`,\n    card_description: (d.diagnosisText || '').slice(0, 8000),\n    note,\n    data_br: dataBR,\n  },\n}];\n"
+      },
+      "id": "154db3b5-98ca-4c29-ac93-1bd4dfac1486",
+      "name": "Montar dados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.wts.chat/core/v1/contact",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  name: $json.name,\n  phoneNumber: $json.phone,\n  email: $json.email,\n  tagNames: ['Diagnóstico Frédy'],\n  metadata: {\n    diagnostico_nivel: $json.nivel,\n    diagnostico_pct: String($json.pct),\n    diagnostico_setor: $json.top_sector,\n    diagnostico_segmento: $json.segment,\n    diagnostico_data: $json.data_br\n  },\n  options: {\n    upsert: true,\n    upsertFields: ['Name', 'Email', 'Tags', 'Metadata'],\n    upsertTagOperation: 'INSERTIFNOTEXISTS'\n  }\n}) }}",
+        "options": {}
+      },
+      "id": "cb0ed5fa-f9bb-42ce-8f96-5da6f6e62a0c",
+      "name": "Criar/atualizar contato",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        -80
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "WTS API - Frédy"
+        }
+      },
+      "notes": "POST core/v1/contact com upsert por telefone. Credencial: a do WTS da conta onde está o Funil Comercial."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.wts.chat/crm/v2/panel/card",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  stepId: 'a80658c9-4327-405a-a848-2ed69995517d',\n  title: $('Montar dados').item.json.card_title,\n  description: $('Montar dados').item.json.card_description,\n  contactIds: [$json.id],\n  tagNames: ['Frédy', 'Diagnóstico Frédy'],\n  metadata: {\n    origem: 'diagnostico-fredy',\n    diagnostico_nivel: $('Montar dados').item.json.nivel,\n    diagnostico_pct: String($('Montar dados').item.json.pct),\n    diagnostico_setor: $('Montar dados').item.json.top_sector,\n    diagnostico_prazo: $('Montar dados').item.json.prazo,\n    diagnostico_faturamento: $('Montar dados').item.json.faturamento,\n    lead_id: $('Montar dados').item.json.lead_id || ''\n  }\n}) }}",
+        "options": {}
+      },
+      "id": "05f7a4e4-5678-4b30-a8f9-8497eb1223a9",
+      "name": "Criar card",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -80
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "WTS API - Frédy"
+        }
+      },
+      "notes": "Painel Funil Comercial - Duda/Frédy (b92678e3-82c8-4a36-a7cc-4d337a7f1f31), etapa Consciência (a80658c9-4327-405a-a848-2ed69995517d). Se o Frédy usar outro painel/etapa, troque o stepId aqui."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.wts.chat/crm/v1/panel/card/{{ $json.id }}/note",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: $('Montar dados').item.json.note }) }}",
+        "options": {}
+      },
+      "id": "72daac73-9445-4fef-892f-75b83de63071",
+      "name": "Anotar respostas no card",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        -80
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "WTS API - Frédy"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.leads SET crm_card_id = '{{ $('Criar card').item.json.id }}' WHERE id = '{{ $('Montar dados').item.json.lead_id }}';",
+        "options": {}
+      },
+      "id": "0a414c51-b241-4cb1-8df6-322ca460d36d",
+      "name": "Gravar card_id no Supabase",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1440,
+        -80
+      ],
+      "disabled": true,
+      "credentials": {
+        "postgres": {
+          "id": "",
+          "name": "Postgres Supabase Téte"
+        }
+      },
+      "notes": "Opcional. Ative quando a tabela leads existir no Supabase."
+    }
+  ],
+  "connections": {
+    "Webhook Diagnóstico": {
+      "main": [
+        [
+          {
+            "node": "É Frédy?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É Frédy?": {
+      "main": [
+        [
+          {
+            "node": "Montar dados",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Montar dados": {
+      "main": [
+        [
+          {
+            "node": "Criar/atualizar contato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar/atualizar contato": {
+      "main": [
+        [
+          {
+            "node": "Criar card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar card": {
+      "main": [
+        [
+          {
+            "node": "Anotar respostas no card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anotar respostas no card": {
+      "main": [
+        [
+          {
+            "node": "Gravar card_id no Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true
+  },
+  "active": false,
+  "pinData": {},
+  "versionId": "44cbfdaa-bf85-4cee-a79b-32f1f624cf29",
+  "meta": {
+    "instanceId": "import"
+  }
+}

@@ -3,6 +3,7 @@ import { leadPayloadSchema } from "@/lib/schema";
 import { generateDiagnosis, calculateScores, answerLabels, type Answers } from "@/lib/scoring";
 import { quizQuestions, SEGMENT_LABELS } from "@/lib/questions";
 import { getSupabaseAdmin } from "@/lib/supabase-server";
+import { PRODUCT } from "@/products";
 import { rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -63,6 +64,13 @@ export async function POST(req: NextRequest) {
   const readableAnswers = Object.fromEntries(
     quizQuestions.map((q) => [q.id, answerLabels(q.id, answers as Answers).join(", ")]),
   );
+  /** Pergunta + resposta em ordem, por bloco: é o que vira anotação no card do CRM */
+  const answersDetail = quizQuestions.map((q) => ({
+    id: q.id,
+    block: q.block,
+    question: q.question,
+    answer: answerLabels(q.id, answers as Answers).join(", "),
+  }));
 
   const row = {
     name: contact.name,
@@ -81,7 +89,7 @@ export async function POST(req: NextRequest) {
     top_sector: diagnosis.topSectorLabel,
     solution_timeline: answers.solution_timeline,
     revenue: answers.revenue,
-    source: "diagnostico-fredy",
+    source: `diagnostico-${PRODUCT.key}`,
     user_agent: req.headers.get("user-agent")?.slice(0, 300) ?? null,
   };
 
@@ -98,7 +106,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 7. Webhook n8n → card no CRM Frédy (best-effort, com timeout)
-  await notifyN8n({ id, ...row, diagnosis });
+  await notifyN8n({ id, product: PRODUCT.key, ...row, answers_detail: answersDetail, diagnosis });
 
   const persisted = id !== null || Boolean(process.env.N8N_LEAD_WEBHOOK_URL);
   return NextResponse.json({ ok: true, id, persisted, diagnosis }, { status: 201 });

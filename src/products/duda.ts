@@ -97,17 +97,6 @@ const questions: QuizQuestion[] = [
       { label: "Ainda não organizamos isso", value: "nao_organizado", atendimento: 1, maturidade: 1 },
     ],
   },
-  {
-    id: "support_messages",
-    block: "Operação",
-    question: "Vocês recebem muitas mensagens de dúvida, reclamação ou pedido de suporte?",
-    options: [
-      { label: "Sim, todos os dias", value: "todos_dias", atendimento: 3, maturidade: 2 },
-      { label: "Sim, algumas vezes por semana", value: "vezes_semana", atendimento: 2, maturidade: 1 },
-      { label: "Raramente", value: "raramente", atendimento: 1, maturidade: 0 },
-      { label: "Quase nunca", value: "quase_nunca", atendimento: 0, maturidade: 0 },
-    ],
-  },
 
   // ---------- Tecnologia ----------
   {
@@ -144,27 +133,16 @@ const questions: QuizQuestion[] = [
     ],
   },
 
-  // ---------- Comercial e pós-venda ----------
+  // ---------- Comercial ----------
   {
     id: "sales_funnel",
-    block: "Comercial e pós-venda",
+    block: "Comercial",
     question: "A empresa tem um funil de vendas definido?",
     options: [
       { label: "Sim, com etapas e metas claras", value: "definido", vendas: 3, maturidade: 2 },
       { label: "Temos algo informal, não documentado", value: "informal", vendas: 2, maturidade: 1 },
       { label: "Estamos montando agora", value: "montando", vendas: 1, maturidade: 1 },
       { label: "Não temos funil", value: "sem_funil", vendas: 0, maturidade: 0 },
-    ],
-  },
-  {
-    id: "post_sale",
-    block: "Comercial e pós-venda",
-    question: "Como funciona o pós-venda e o suporte ao cliente?",
-    options: [
-      { label: "Temos um time dedicado de suporte", value: "time_dedicado", posVenda: 3, maturidade: 2 },
-      { label: "O vendedor/atendente faz o pós-venda", value: "vendedor_faz", posVenda: 2, maturidade: 1 },
-      { label: "O cliente volta a falar quando precisa", value: "cliente_volta", posVenda: 1, maturidade: 1 },
-      { label: "Não temos pós-venda estruturado", value: "sem_pos_venda", posVenda: 0, maturidade: 0 },
     ],
   },
 

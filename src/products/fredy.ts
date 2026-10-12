@@ -136,7 +136,7 @@ const questions: QuizQuestion[] = [
     block: "Tecnologia",
     question: "Como vocês organizam os leads e orçamentos?",
     options: [
-      { label: "Num CRM pago", value: "crm_pago", maturidade: 3 },
+      { label: "CRM Pago", value: "crm_pago", maturidade: 3 },
       { label: "Em planilha / Excel", value: "planilha", maturidade: 2 },
       { label: "Já testei CRM, mas não uso mais", value: "testei", maturidade: 1 },
       { label: "Fica na conversa do WhatsApp mesmo", value: "nenhum", maturidade: 0 },
@@ -152,7 +152,7 @@ const questions: QuizQuestion[] = [
       { label: "Sim, com etapas e metas claras", value: "definido", vendas: 3, maturidade: 2 },
       { label: "Temos algo informal, não documentado", value: "informal", vendas: 2, maturidade: 1 },
       { label: "Estamos montando agora", value: "montando", vendas: 1, maturidade: 1 },
-      { label: "Não temos funil", value: "sem_funil", vendas: 0, maturidade: 0 },
+      { label: "Não temos funil definido", value: "sem_funil", vendas: 0, maturidade: 0 },
     ],
   },
   {
@@ -199,9 +199,9 @@ const questions: QuizQuestion[] = [
     block: "Urgência",
     question: "Qual o faturamento médio mensal da agência?",
     options: [
-      { label: "Até R$ 100 mil", value: "ate_100k", maturidade: 1 },
-      { label: "R$ 100 mil a R$ 300 mil", value: "100k_300k", maturidade: 2 },
-      { label: "R$ 300 mil a R$ 1 milhão", value: "300k_1mi", maturidade: 3 },
+      { label: "R$ 100 mil a R$ 300 mil", value: "100k_300k", maturidade: 1 },
+      { label: "R$ 300 mil a R$ 500 mil", value: "300k_500k", maturidade: 2 },
+      { label: "R$ 500 mil a R$ 1 milhão", value: "500k_1mi", maturidade: 3 },
       { label: "Acima de R$ 1 milhão", value: "acima_1mi", maturidade: 4 },
     ],
   },

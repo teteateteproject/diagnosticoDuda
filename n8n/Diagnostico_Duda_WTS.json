@@ -1,0 +1,261 @@
+{
+  "name": "Diagnóstico Duda - Lead → WTS (contato + card + anotação)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "diagnostico-duda",
+        "authentication": "headerAuth",
+        "responseMode": "onReceived",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "id": "f206726e-d673-44c8-b99e-54e3af073d83",
+      "name": "Webhook Diagnóstico",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "Diagnóstico Duda - Webhook Secret"
+        }
+      },
+      "notes": "Recebe o POST do site (N8N_LEAD_WEBHOOK_URL). Credencial Header Auth: Name=Authorization, Value=Bearer <N8N_WEBHOOK_SECRET>."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6c6ecf36-4434-4358-8db4-4dca9362d060",
+              "leftValue": "={{ $json.body.product }}",
+              "rightValue": "duda",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f8e15bde-3997-49f2-8d19-53085a789b52",
+      "name": "É Duda?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        0
+      ],
+      "notes": "Nesta etapa só o site da Duda cria card. O Frédy cai na saída false (nada acontece)."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Nó \"Montar dados\" (Code, Run Once for All Items)\n// Entrada: body do webhook enviado pelo site (POST /api/leads → N8N_LEAD_WEBHOOK_URL)\nconst b = $input.first().json.body ?? $input.first().json;\n\n// ---- telefone: só dígitos, com DDI 55, no formato que o WTS usa (+55DDDNÚMERO)\nlet digits = String(b.whatsapp || '').replace(/\\D/g, '');\nif (!(digits.startsWith('55') && digits.length >= 12)) digits = '55' + digits;\nconst phone = '+' + digits;\n\n// ---- rótulos\nconst nivelMap = { alta: 'Alta', media: 'Média', inicial: 'Inicial' };\nconst nivel = nivelMap[b.maturity_level] || b.maturity_level || '';\nconst d = b.diagnosis || {};\nconst ans = b.answers || {};\nconst readable = b.answers_readable || {};\n\nconst dataBR = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });\n\n// ---- anotação do card: respostas por bloco\nconst blocks = [];\nfor (const q of (b.answers_detail || [])) {\n  let blk = blocks.find(x => x.name === q.block);\n  if (!blk) { blk = { name: q.block, items: [] }; blocks.push(blk); }\n  blk.items.push(`• ${q.question}\\n  → ${q.answer || '—'}`);\n}\n\nconst note = [\n  `DIAGNÓSTICO DUDA — ${dataBR}`,\n  `Nome: ${b.name}`,\n  `E-mail: ${b.email}`,\n  `WhatsApp: ${phone}`,\n  `Segmento: ${b.segment || '—'}`,\n  ``,\n  `RESULTADO`,\n  `Maturidade: ${nivel} (${b.maturity_score}/${b.max_maturity_score} pts · ${b.maturity_pct}%)`,\n  `Setor de maior impacto: ${b.top_sector}`,\n  `Vendas ${b.vendas_score} · Suporte ${b.atendimento_score} · Pós-vendas ${b.pos_venda_score}`,\n  `Prazo pra resolver: ${readable.solution_timeline || ans.solution_timeline || '—'}`,\n  `Faturamento: ${readable.revenue || ans.revenue || '—'}`,\n  ``,\n  `RESPOSTAS`,\n  ...blocks.flatMap(blk => [`[${blk.name}]`, ...blk.items, ``]),\n  `DIAGNÓSTICO ENTREGUE`,\n  d.diagnosisText || '',\n  ``,\n  `Próximos passos sugeridos:`,\n  ...((d.nextSteps || []).map(s => `• ${s}`)),\n  ``,\n  `CTA mostrado: ${d.ctaText || '—'}`,\n  `Lead ID (Supabase): ${b.id || '—'}`,\n].join('\\n').slice(0, 8000); // limite da API\n\nreturn [{\n  json: {\n    lead_id: b.id || null,\n    product: b.product || 'duda',\n    name: b.name,\n    email: b.email,\n    phone,\n    segment: b.segment || '',\n    nivel,\n    nivel_key: b.maturity_level,\n    pct: b.maturity_pct,\n    top_sector: b.top_sector,\n    prazo: readable.solution_timeline || ans.solution_timeline || '',\n    faturamento: readable.revenue || ans.revenue || '',\n    card_title: `Diagnóstico Duda · ${b.name} · Maturidade ${nivel} (${b.maturity_pct}%)`,\n    card_description: (d.diagnosisText || '').slice(0, 8000),\n    note,\n    data_br: dataBR,\n  },\n}];\n"
+      },
+      "id": "975df57f-579a-4755-9273-058bbfa93a47",
+      "name": "Montar dados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.wts.chat/core/v1/contact",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  name: $json.name,\n  phoneNumber: $json.phone,\n  email: $json.email,\n  tagNames: ['Duda', 'Diagnóstico'],\n  metadata: {\n    diagnostico_nivel: $json.nivel,\n    diagnostico_pct: String($json.pct),\n    diagnostico_setor: $json.top_sector,\n    diagnostico_segmento: $json.segment,\n    diagnostico_data: $json.data_br\n  },\n  options: {\n    upsert: true,\n    upsertFields: ['Name', 'Email', 'Tags', 'Metadata'],\n    upsertTagOperation: 'INSERTIFNOTEXISTS'\n  }\n}) }}",
+        "options": {}
+      },
+      "id": "8b9d29a7-5d2b-45d4-bdd8-bef16247eb31",
+      "name": "Criar/atualizar contato",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        -80
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "WTS API - SDR Duda"
+        }
+      },
+      "notes": "POST core/v1/contact com upsert: se o telefone já existe, só atualiza Nome/E-mail/Etiquetas/Metadata (não mexe na anotação do contato)."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.wts.chat/crm/v2/panel/card",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  stepId: 'a80658c9-4327-405a-a848-2ed69995517d',\n  title: $('Montar dados').item.json.card_title,\n  description: $('Montar dados').item.json.card_description,\n  contactIds: [$json.id],\n  tagNames: ['Duda'],\n  metadata: {\n    origem: 'diagnostico-duda',\n    diagnostico_nivel: $('Montar dados').item.json.nivel,\n    diagnostico_pct: String($('Montar dados').item.json.pct),\n    diagnostico_setor: $('Montar dados').item.json.top_sector,\n    diagnostico_prazo: $('Montar dados').item.json.prazo,\n    diagnostico_faturamento: $('Montar dados').item.json.faturamento,\n    lead_id: $('Montar dados').item.json.lead_id || ''\n  }\n}) }}",
+        "options": {}
+      },
+      "id": "4f7b9010-b5ca-43e3-b8fb-e3fc47249b8f",
+      "name": "Criar card",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        -80
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "WTS API - SDR Duda"
+        }
+      },
+      "notes": "Painel Funil Comercial - Duda/Frédy (b92678e3-82c8-4a36-a7cc-4d337a7f1f31), etapa Consciência. Se a etiqueta não colar por nome, troque tagNames por tagIds (GET crm/v1/panel/{id}?IncludeDetails=Tags)."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.wts.chat/crm/v1/panel/card/{{ $json.id }}/note",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: $('Montar dados').item.json.note }) }}",
+        "options": {}
+      },
+      "id": "0b0d8623-4a14-4d44-9e23-43d0cbc90347",
+      "name": "Anotar respostas no card",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        -80
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "WTS API - SDR Duda"
+        }
+      },
+      "notes": "POST crm/v1/panel/card/{cardId}/note — texto com resultado + todas as perguntas/respostas (máx 8000 chars)."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE public.leads SET crm_card_id = '{{ $('Criar card').item.json.id }}' WHERE id = '{{ $('Montar dados').item.json.lead_id }}';",
+        "options": {}
+      },
+      "id": "012fb338-ecda-4d52-84a6-1f372f38ccb0",
+      "name": "Gravar card_id no Supabase",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1440,
+        -80
+      ],
+      "disabled": true,
+      "credentials": {
+        "postgres": {
+          "id": "",
+          "name": "Postgres Supabase Téte"
+        }
+      },
+      "notes": "Opcional. Ative quando a tabela leads existir no Supabase (migration 0001_leads.sql) e o site estiver com SUPABASE_URL configurado (lead_id vem preenchido)."
+    }
+  ],
+  "connections": {
+    "Webhook Diagnóstico": {
+      "main": [
+        [
+          {
+            "node": "É Duda?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "É Duda?": {
+      "main": [
+        [
+          {
+            "node": "Montar dados",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Montar dados": {
+      "main": [
+        [
+          {
+            "node": "Criar/atualizar contato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar/atualizar contato": {
+      "main": [
+        [
+          {
+            "node": "Criar card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar card": {
+      "main": [
+        [
+          {
+            "node": "Anotar respostas no card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anotar respostas no card": {
+      "main": [
+        [
+          {
+            "node": "Gravar card_id no Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "saveManualExecutions": true
+  },
+  "active": false,
+  "pinData": {},
+  "versionId": "04c34ba5-fbfc-4986-b873-09853314f2a7",
+  "meta": {
+    "instanceId": "import"
+  }
+}

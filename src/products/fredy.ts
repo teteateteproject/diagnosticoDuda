@@ -263,6 +263,7 @@ export const fredy: ProductDefinition = {
   contactLead:
     "O resultado aparece na tela e vai por e-mail. O WhatsApp é só pra quando você quiser falar com o time Frédy.",
 
+  sectorKeys: ["vendas", "atendimento", "posVenda"],
   sectors: {
     vendas: {
       label: "Vendas",

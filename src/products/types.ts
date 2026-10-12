@@ -68,7 +68,9 @@ export interface ProductDefinition {
 
   contactLead: string;
 
-  sectors: Record<SectorKey, { label: string; message: string }>;
+  /** Setores ativos neste produto, na ordem do gráfico. Os demais não pontuam nem aparecem. */
+  sectorKeys: SectorKey[];
+  sectors: Partial<Record<SectorKey, { label: string; message: string }>>;
   sectorsAllLabel: string;
   sectorsCombinedMessage: string;
   sectorsTiedMessage: (labels: string) => string;

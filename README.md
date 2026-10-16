@@ -126,4 +126,4 @@ Workflow pronto em `n8n/Diagnostico_Duda_WTS.json` (contato + card + anotação,
 1. Importe o repo, framework Next.js (detectado).
 2. Cole as variáveis do `.env.example` em Settings → Environment Variables.
 3. Rode a migration no Supabase.
-4. Aponte `diagnostico.fredy.app` pro projeto.
+4. Aponte o domínio pro projeto: Frédy `diagnostico.fredy.app`, Duda `www.diagnosticocomaduda.com.br`.

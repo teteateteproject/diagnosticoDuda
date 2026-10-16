@@ -1,11 +1,11 @@
 # Workflows n8n — Diagnóstico → WTS
 
 - `Diagnostico_Duda_WTS.json` — site da Duda → webhook `/webhook/diagnostico-duda`, etiquetas `Diagnóstico Duda` (contato) e `Duda` + `Diagnóstico Duda` (card). **Recebe as duas etapas** (`iniciado` e `concluido`).
-- `Diagnostico_Fredy_WTS.json` — site do Frédy → webhook `/webhook/diagnostico-fredy`, etiquetas `Diagnóstico Frédy` (contato) e `Frédy` + `Diagnóstico Frédy` (card). **Versão antiga, só `concluido`**: não aponte um site que manda `iniciado` pra ele (criaria card vazio).
+- `Diagnostico_Fredy_WTS.json` — site do Frédy → webhook `/webhook/diagnostico-fredy`, etiquetas `Diagnóstico Frédy` (contato) e `Frédy` + `Diagnóstico Frédy` (card), etapa `a80658c9-4327-405a-a848-2ed69995517d`. **Recebe as duas etapas**, mesma lógica da Duda (abaixo), com prefixo `Diagnóstico Frédy ·` e origem `diagnostico-fredy`.
 
 Importe em workflows.tedyleads.com.br (Import from File).
 
-## Duas etapas (Duda)
+## Duas etapas (Duda e Frédy; descrito com a Duda)
 
 O site manda o lead em dois momentos, no mesmo webhook, diferenciados por `stage`:
 
@@ -37,4 +37,4 @@ Pra achar quem abandonou: no card, metadado `diagnostico_status = iniciado` e t�
 2. No Vercel do projeto: `N8N_LEAD_WEBHOOK_URL=https://webhooks.tedyleads.com.br/webhook/diagnostico-duda` e `N8N_WEBHOOK_SECRET=<o segredo SEM "Bearer">`.
 3. Ative o workflow **antes** de publicar o site que manda `iniciado`, e teste: preencha os dados, responda 1 pergunta e feche (deve criar o card "Em andamento"); depois faça um completo com o mesmo número (deve atualizar o mesmo card).
 
-`montar_dados.js` e `decidir_acao.js` são o código dos nós Code, em arquivo só pra leitura/edição.
+`montar_dados.js` (Duda), `montar_dados_fredy.js` (Frédy) e `decidir_acao.js` (os dois) são o código dos nós Code, em arquivo só pra leitura/edição.

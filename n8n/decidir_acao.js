@@ -12,7 +12,7 @@ const items = Array.isArray(res.items) ? res.items : [];
 
 // Card do diagnóstico = metadado origem OU título com o prefixo (cards do SDR no mesmo painel ficam de fora)
 const doDiagnostico = (c) =>
-  (c.metadata && c.metadata.origem === 'diagnostico-duda') ||
+  (c.metadata && c.metadata.origem === m.card_metadata.origem) ||
   String(c.title || '').startsWith(`${m.card_prefix} ·`);
 
 const card = items

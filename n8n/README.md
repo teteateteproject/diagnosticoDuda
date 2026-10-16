@@ -20,7 +20,7 @@ Fluxo: **Webhook** → **É Duda?** → **Montar dados** (Code, monta contato/ca
 
 | Etapa | Já tem card aberto do diagnóstico? | Ação |
 |---|---|---|
-| iniciado | não | **Criar card** "Diagnóstico Duda · Nome · Em andamento" (etapa Consciência) + anotação curta |
+| iniciado | não | **Criar card** "Diagnóstico Duda · Nome · Em andamento" (etapa `34039e39-24ae-49a1-85f1-cd46dd8ecd6c` do painel `b92678e3-…`) + anotação curta |
 | iniciado | sim (recomeçou) | nada, pra não duplicar |
 | concluido | sim | **Atualizar card** (`PUT crm/v3/panel/card/{id}`: título com maturidade, descrição, metadados; etapa não muda) + anotação com as respostas |
 | concluido | não (o iniciado falhou) | **Criar card** completo + anotação |

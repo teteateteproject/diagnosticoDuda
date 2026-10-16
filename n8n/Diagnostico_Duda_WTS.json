@@ -234,7 +234,7 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  stepId: 'a80658c9-4327-405a-a848-2ed69995517d',\n  title: $('Montar dados').first().json.card_title,\n  description: $('Montar dados').first().json.card_description,\n  contactIds: [$json.contact_id],\n  tagNames: ['Duda', 'Diagnóstico Duda'],\n  metadata: $('Montar dados').first().json.card_metadata\n}) }}",
+        "jsonBody": "={{ JSON.stringify({\n  stepId: '34039e39-24ae-49a1-85f1-cd46dd8ecd6c',\n  title: $('Montar dados').first().json.card_title,\n  description: $('Montar dados').first().json.card_description,\n  contactIds: [$json.contact_id],\n  tagNames: ['Duda', 'Diagnóstico Duda'],\n  metadata: $('Montar dados').first().json.card_metadata\n}) }}",
         "options": {}
       },
       "id": "4f7b9010-b5ca-43e3-b8fb-e3fc47249b8f",
@@ -251,7 +251,7 @@
           "name": "WTS API - SDR Duda"
         }
       },
-      "notes": "Painel Funil Comercial - Duda/Frédy (b92678e3-82c8-4a36-a7cc-4d337a7f1f31), etapa Consciência. Se a etiqueta não colar por nome, troque tagNames por tagIds (GET crm/v1/panel/{id}?IncludeDetails=Tags)."
+      "notes": "Painel Funil Comercial - Duda/Frédy (b92678e3-82c8-4a36-a7cc-4d337a7f1f31), etapa 34039e39-24ae-49a1-85f1-cd46dd8ecd6c. Se a etiqueta não colar por nome, troque tagNames por tagIds (GET crm/v1/panel/{id}?IncludeDetails=Tags)."
     },
     {
       "parameters": {
